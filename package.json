@@ -1,0 +1,24 @@
+{
+  "name": "app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "create-react-app": "^1.5.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "prop-types": "^15.6.1",
+    "axios": "^0.18.0",
+    "react-router-dom": "^4.2.2"
+  },
+  "proxy": "https://cra-cssmodule.glitch.me",
+  "devDependencies": {
+    "react-scripts-cssmodules": "1.0.171"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "homepage": "https://amandarfernandes.github.io/burgerbuilder/"
+}
