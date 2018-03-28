@@ -5,11 +5,12 @@ import Spinner from '../../../components/UI/Spinner/Spinner';
 import axios from '../../../axios-orders';
 import Input from '../../../components/UI/Input/Input';
 import {createField} from '../../../helper/createField'
-
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import { connect } from 'react-redux';
+import * as actions from '../../../store/actions/';
 class ContactData extends Component { 
 
   state= {
-    loading:false,
     validForm:false,
     orderForm: {
       name:createField("input",
@@ -45,6 +46,7 @@ validationCheck(value,rules){
   let isValid=true;
   if (rules.required && isValid) {
       isValid=value.trim() !== '';
+      console.log(value, isValid)
   }
   if (rules.minLength && isValid) {
     isValid=value.length >= rules.minLength;
@@ -69,20 +71,18 @@ changeHandler=(e,id)=>{
   //check for valid form
   let validForm = true;
   for (let field in orderForm) {
-    
     if (orderForm[field].validation)
       validForm = orderForm[field].valid && validForm;
     }
-  
-  console.log(validForm)
+
   this.setState({orderForm,validForm});
-  
+
 }
 
 
 orderHandler = (e) =>{
   e.preventDefault();
-  this.setState({loading:true});
+  //this.setState({loading:true});
   const {orderForm} = this.state; 
   const customer = {};
   for (let element in orderForm) {
@@ -98,25 +98,18 @@ orderHandler = (e) =>{
       customer,
     };
     
-    axios.post('/orders.json', order)
-      .then(response=>{
-      this.setState({loading:false});
-      this.props.history.push('/');
-    })
-      .catch(error=>{
-        console.log(error); 
-        this.setState({loading:false});
-      });
+    this.props.saveBurgerOrder(order);
+  
 }
 
 render() {
   
   let formElements = [];
   for (let field in this.state.orderForm) {
-    formElements = [...formElements,{
+    formElements = [ ...formElements,{
       id:field,
       config:this.state.orderForm[field]
-    }]
+    }];
   }
   
   let form = (
@@ -142,11 +135,10 @@ render() {
     </form>
   );
   
-  if (this.state.loading) {
+  if (this.props.loading) {
     form = <Spinner />;
   }
   
-console.log('form valid'+ this.state.validForm)
   return(
   <div className={styles.ContactData}>
     <h4>Contact</h4>
@@ -157,4 +149,14 @@ console.log('form valid'+ this.state.validForm)
 
 }
 
-export default ContactData;
+const mapStateToProps = state => ({
+  ingredients:state.burger.ingredients,
+  totalPrice:state.burger.totalPrice,
+  loading:state.order.loading
+});
+
+const mapDispatchToProps = dispatch => ({
+  saveBurgerOrder:(order)=>dispatch(actions.saveBurgerOrder(order))
+});
+
+export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(ContactData,axios));
