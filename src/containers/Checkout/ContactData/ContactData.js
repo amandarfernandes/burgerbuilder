@@ -4,7 +4,7 @@ import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner'; 
 import axios from '../../../axios-orders';
 import Input from '../../../components/UI/Input/Input';
-import {createField} from '../../../helper/createField'
+import { createField, validationCheck,getFormElements } from '../../formUtility';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import { connect } from 'react-redux';
 import * as actions from '../../../store/actions/';
@@ -23,7 +23,7 @@ class ContactData extends Component {
             ),
       email:createField("input",
             {type:"email",placeholder:"Email address"},
-             null,{required:true}
+             null,{required:true,isEmail:true}
              ),
       street:createField("input",
              {type:"text",placeholder:"Street"}),
@@ -42,21 +42,6 @@ class ContactData extends Component {
     }
   }
 
-validationCheck(value,rules){
-  let isValid=true;
-  if (rules.required && isValid) {
-      isValid=value.trim() !== '';
-      console.log(value, isValid)
-  }
-  if (rules.minLength && isValid) {
-    isValid=value.length >= rules.minLength;
-  }
-  if (rules.maxLength && isValid) {
-    isValid=value.length <= rules.minLength;
-  }
-  return isValid;
-}
-
 changeHandler=(e,id)=>{
   const {orderForm} = this.state;
   const updatedElement = {...orderForm[id]};
@@ -64,7 +49,7 @@ changeHandler=(e,id)=>{
   updatedElement.value = e.target.value;
   updatedElement.touched=true;
   if (updatedElement.validation){
-    updatedElement.valid = this.validationCheck(updatedElement.value,updatedElement.validation)}
+    updatedElement.valid = validationCheck(updatedElement.value,updatedElement.validation)}
   
   orderForm[id] = updatedElement;
   
@@ -79,31 +64,29 @@ changeHandler=(e,id)=>{
 
 }
 
-
 orderHandler = (e) =>{
   e.preventDefault();
-  //this.setState({loading:true});
+
   const {orderForm} = this.state; 
   const customer = {};
   for (let element in orderForm) {
     console.log(orderForm[element].value)
     customer[element] = orderForm[element].value;
   }
-//  console.log(customer);
   const {ingredients, totalPrice} = this.props;
     
-    const order = {
-      ingredients,
-      totalPrice:totalPrice.toFixed(2),
-      customer,
-    };
+  const order = {
+    ingredients,
+    totalPrice:totalPrice.toFixed(2),
+    customer
+  };
     
-    this.props.saveBurgerOrder(order);
+  this.props.saveBurgerOrder(order);
   
 }
 
 render() {
-  
+  /*
   let formElements = [];
   for (let field in this.state.orderForm) {
     formElements = [ ...formElements,{
@@ -111,6 +94,9 @@ render() {
       config:this.state.orderForm[field]
     }];
   }
+  */
+  
+  let formElements = getFormElements(this.state.orderForm);
   
   let form = (
     <form>
