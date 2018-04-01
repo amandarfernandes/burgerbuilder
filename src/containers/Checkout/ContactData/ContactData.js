@@ -73,28 +73,20 @@ orderHandler = (e) =>{
     console.log(orderForm[element].value)
     customer[element] = orderForm[element].value;
   }
-  const {ingredients, totalPrice} = this.props;
+  const {ingredients, totalPrice, userId} = this.props;
     
   const order = {
     ingredients,
     totalPrice:totalPrice.toFixed(2),
-    customer
+    customer,
+    userId
   };
     
-  this.props.saveBurgerOrder(order);
+  this.props.saveBurgerOrder(order,this.props.token);
   
 }
 
 render() {
-  /*
-  let formElements = [];
-  for (let field in this.state.orderForm) {
-    formElements = [ ...formElements,{
-      id:field,
-      config:this.state.orderForm[field]
-    }];
-  }
-  */
   
   let formElements = getFormElements(this.state.orderForm);
   
@@ -138,11 +130,13 @@ render() {
 const mapStateToProps = state => ({
   ingredients:state.burger.ingredients,
   totalPrice:state.burger.totalPrice,
-  loading:state.order.loading
+  loading:state.order.loading,
+  token:state.auth.token,
+  userId:state.auth.userId
 });
 
 const mapDispatchToProps = dispatch => ({
-  saveBurgerOrder:(order)=>dispatch(actions.saveBurgerOrder(order))
+  saveBurgerOrder:(order,token)=>dispatch(actions.saveBurgerOrder(order,token))
 });
 
 export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(ContactData,axios));

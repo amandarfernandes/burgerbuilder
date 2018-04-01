@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './BuildControls.module.css';
 import BuildControl from './BuildControl/BuildControl.js';
+import { withRouter } from 'react-router-dom';
 
 const controls = [
   {label: 'Salad', type:'salad'},
@@ -8,7 +9,9 @@ const controls = [
   {label: 'Cheese', type:'cheese'},
   {label: 'Bacon', type:'bacon'}
 ];
-const buildControls = props=>(
+const buildControls = props=>{
+  console.log(props)
+  return (
   <div className={styles.BuildControls}>
     <h3>Cost of Burger: <span className={styles.Price}>${props.price.toFixed(2)}</span></h3>
     {controls.map(control=>(
@@ -27,9 +30,9 @@ const buildControls = props=>(
       onClick={props.order}
     > Order Now </button>
   </div>
-);
+)};
 
-export default buildControls;
+export default withRouter(buildControls);
 
 
 

@@ -16,9 +16,9 @@ const saveBurgerStart = ()=>({
   type:actionType.PURCHASE_BURGER_START
 })
 
-export const saveBurgerOrder = order =>dispatch=>{
+export const saveBurgerOrder = (order,token) =>dispatch=>{
    dispatch(saveBurgerStart());
-  return axios.post('/orders.json', order)
+  return axios.post(`/orders.json?auth=${token}`, order)
   .then(res=>dispatch(purchaseBurgerSuccess(res.data.name,order)))
   .catch(err=>dispatch(purchaseBurgerFail(err)))
 }
@@ -41,9 +41,9 @@ const fetchOrdersStart=()=>({
   type:actionType.FETCH_ORDERS_START
 })
 
-export const fetchOrders=()=>dispatch=>{
+export const fetchOrders=token=>dispatch=>{
    dispatch(fetchOrdersStart());
-  return axios.get('/orders.json')
+  return axios.get(`/orders.json?auth=${token}`)
   .then(res=>{
     const fetchedOrders = [];
     for (let orderName in res.data) {
